@@ -35,8 +35,8 @@
         <h1>Welcome!</h1><br>
         <p id="theResult">Please draw a number in the canvas below and our pre-trained model will try to predict your number. </p>
         
-        <div style="margin:auto;">
-            <canvas id="canvas" width="250" height="250" class="canvas" style="border: 1px solid black;padding: 0;display: block;margin: auto;"></canvas>
+        <div style="width: 100%;text-align:center;">
+            <canvas id="canvas" width="250" height="250" class="canvas" style="border: 1px solid black;display:inline;"></canvas>
         </div>
         
 
@@ -53,9 +53,9 @@
 
 $(function () {
     canvas = window._canvas = new fabric.Canvas('canvas');
-    canvas.backgroundColor = 'black';
+    canvas.backgroundColor = 'white';
     canvas.isDrawingMode= 1;
-    canvas.freeDrawingBrush.color = "white";
+    canvas.freeDrawingBrush.color = "black";
     canvas.freeDrawingBrush.width = 10;
     canvas.renderAll();
 
