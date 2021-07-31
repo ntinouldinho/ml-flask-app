@@ -1,5 +1,6 @@
 import numpy as np
 from PIL import Image
+from tensorflow import keras
 
 
 def softmax( x, ax=1 ):
@@ -25,3 +26,15 @@ def ml_softmax_test(title):
     
     ttest = np.argmax(ytest, 0)
     return ttest
+
+def cnn_test(title):
+    mdl = keras.models.load_model('my_model')
+
+    im = Image.open(title)
+    pixels = list(im.getdata())
+    newPixels =np.array([1-pixels[x][0]/255.0 for x in range(len(pixels)) ])
+    newPixels = newPixels.reshape(1,28, 28)
+
+    pred = mdl.predict([newPixels])
+
+    return np.argmax(pred[0])
