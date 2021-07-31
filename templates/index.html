@@ -1,27 +1,103 @@
-<link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="gr">
 
-<style>
-    * {
-        font-family: "Rubik", "sans-serif";
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: "Rubik", "sans-serif";
+        }
+
+        div {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: red;
+            font-size: 40pt;
+        }
+
+        p {
+            font-size: 24pt;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>Welcome!</h1><br>
+        <p id="theResult">This site has been visitedd {{ count }} times.</p>
+        
+        <canvas id="canvas" width="250" height="250" class="canvas" style="border: 1px solid black"></canvas>
+
+        <canvas id="smallCanvas" width="23" height="23" class="canvas" style="border: 1px solid black"></canvas>
+
+        <form method="post" action="test" enctype="multipart/form-data" onsubmit="sender()">
+            Select image to upload:
+            <input type="file" name="file" id="file">
+            <input type="submit" value="Upload Image" name="submit">
+        </form>
+
+        <button type="button" id="btn">gg</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.3.0/fabric.min.js"></script>
+    
+    <script>
+            
+            var canvas;
+
+$(function () {
+    canvas = window._canvas = new fabric.Canvas('canvas');
+    canvas.backgroundColor = 'black';
+    canvas.isDrawingMode= 1;
+    canvas.freeDrawingBrush.color = "white";
+    canvas.freeDrawingBrush.width = 10;
+    canvas.renderAll();
+
+    function download(url,name){
+    // make the link. set the href and download. emulate dom click
+        $('<a>').attr({href:url,download:name})[0].click();
+    }
+    function downloadFabric(canvas,name){
+    //  convert the canvas to a data url and download it.
+        // download(canvas.toDataURL(),name+'.jpg');
+        
+        $.ajax({
+          type: "POST",
+          url:"test",
+          enctype: "multipart/form-data",
+          data: {"file": canvas.toDataURL()}
+        }).then(function(response){
+            $('#theResult').text(response);
+        });
     }
 
-    div {
-        text-align: center;
-        margin-top: 50px;
-    }
+    $('#btn').click(function(){
+        // downloadFabric(canvas,"image");
+        // var canvi = document.createElement("newer");
+        var resizedCanvas =window._canvas = new fabric.Canvas('smallCanvas');
+var resizedContext = resizedCanvas.getContext("2d");
 
-    h1 {
-        color: red;
-        font-size: 40pt;
-    }
+resizedCanvas.height = "23";
+resizedCanvas.width = "23";
 
-    p {
-        font-size: 24pt;
-    }
-</style>
+var canvas = document.getElementById("canvas");
 
-<div>
-    <h1>Welcome!</h1><br>
-    <p>This site has been visitedd {{ count }} times.</p>
-</div>
+resizedContext.drawImage(canvas, 0, 0, 32 , 32);
+// var myResizedData = resizedCanvas.toDataURL();
+downloadFabric(document.getElementById("smallCanvas"),"image");
+    })
+
+});
+    </script>
+</body>
+
+</html>
