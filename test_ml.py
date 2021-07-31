@@ -14,8 +14,8 @@ def ml_softmax_test(title):
 
     im = Image.open(title)
     pixels = list(im.getdata())
-    newPixels = [ pixels[x][0] for x in range(len(pixels)) ]
-    newPixels.append(255)
+    newPixels = [1-pixels[x][0]/255.0 for x in range(len(pixels)) ]
+    newPixels.append(1.0)
     
     Z = np.cos(np.dot(newPixels, W1.T))
     
