@@ -33,7 +33,7 @@ def test():
         
         convert_and_save(file)
 
-        return str(cnn_test("imageToSave.png"))
+        return "With cnn:"+str(cnn_test("imageToSave.png"))
 
 
 def convert_and_save(b64_string):
