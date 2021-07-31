@@ -1,48 +1,44 @@
-from flask import Flask, render_template
-import pickle
+import os
+import base64
+from flask import Flask, flash, request, redirect, url_for,render_template
+from werkzeug.utils import secure_filename
+from test_ml import ml_softmax_test
+
+UPLOAD_FOLDER = './pics'
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def index():
     
-    # Load current count
-    f = open("count.txt", "r")
-    count = int(f.read())
-    f.close()
 
-    # Increment the count
-    count += 1
-
-    # Overwrite the count
-    f = open("count.txt", "w")
-    f.write(str(count))
-    f.close()
-
-    # Render HTML with count variable
     return render_template("index.html", count=count)
 
+# WRITE ON A 32X32 CANVAS AND GIVE IMAGE TO THE PICKLE EXPORT TO GUESS WHAT NUMBER IT IS
 
-
-@app.route("/test")
+@app.route("/test", methods=['GET', 'POST'])
 def test():
+     if request.method == 'POST':
+         
+        if 'file' not in request.values:
     
-    # Load current count
-    f = open("count.txt", "r")
-    count = int(f.read())
-    f.close()
+            flash('No file part')
+            return redirect(request.url)
 
-    # Increment the count
-    count += 100
+        file = request.values['file']
 
-    # Overwrite the count
-    f = open("count.txt", "w")
-    f.write(str(count))
-    f.close()
+        #remove the begining of the file
+        file = file.replace("data:image/png;base64,", "")
+        
+        convert_and_save(file)
 
-    # Render HTML with count variable
-    return render_template("index.html", count=count)
+        return str(ml_softmax_test("imageToSave.png"))
 
+
+def convert_and_save(b64_string):
+    with open("imageToSave.png", "wb") as fh:
+        fh.write(base64.decodebytes(b64_string.encode()))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
