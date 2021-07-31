@@ -2,7 +2,7 @@ import os
 import base64
 from flask import Flask, flash, request, redirect, url_for,render_template
 from werkzeug.utils import secure_filename
-from test_ml import ml_softmax_test
+from test_ml import ml_softmax_test,cnn_test
 
 UPLOAD_FOLDER = './pics'
 
@@ -33,7 +33,7 @@ def test():
         
         convert_and_save(file)
 
-        return str(ml_softmax_test("imageToSave.png"))
+        return str(cnn_test("imageToSave.png"))
 
 
 def convert_and_save(b64_string):
