@@ -33,19 +33,16 @@
 <body>
     <div>
         <h1>Welcome!</h1><br>
-        <p id="theResult">This site has been visitedd {{ count }} times.</p>
+        <p id="theResult">Please draw a number in the canvas below and our pre-trained model will try to predict your number. </p>
         
-        <canvas id="canvas" width="250" height="250" class="canvas" style="border: 1px solid black"></canvas>
+        <div style="margin:auto;">
+            <canvas id="canvas" width="250" height="250" class="canvas" style="border: 1px solid black;padding: 0;display: block;margin: auto;"></canvas>
+        </div>
+        
 
-        <canvas id="smallCanvas" width="23" height="23" class="canvas" style="border: 1px solid black"></canvas>
+        <canvas id="smallCanvas" width="23" height="23" class="canvas" style="border: 1px solid black;display:none;"></canvas>
 
-        <form method="post" action="test" enctype="multipart/form-data" onsubmit="sender()">
-            Select image to upload:
-            <input type="file" name="file" id="file">
-            <input type="submit" value="Upload Image" name="submit">
-        </form>
-
-        <button type="button" id="btn">gg</button>
+        <button type="button" id="btn">Calculate</button>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.3.0/fabric.min.js"></script>
@@ -62,13 +59,14 @@ $(function () {
     canvas.freeDrawingBrush.width = 10;
     canvas.renderAll();
 
-    function download(url,name){
-    // make the link. set the href and download. emulate dom click
-        $('<a>').attr({href:url,download:name})[0].click();
-    }
-    function downloadFabric(canvas,name){
-    //  convert the canvas to a data url and download it.
-        // download(canvas.toDataURL(),name+'.jpg');
+
+    // function download(url,name){
+    // // make the link. set the href and download. emulate dom click
+    //     $('<a>').attr({href:url,download:name})[0].click();
+    // }
+
+    function calculate(canvas,name){
+    //  convert the canvas to a data url and download it
         
         $.ajax({
           type: "POST",
@@ -76,7 +74,7 @@ $(function () {
           enctype: "multipart/form-data",
           data: {"file": canvas.toDataURL()}
         }).then(function(response){
-            $('#theResult').text(response);
+            $('#theResult').text(`You wrote number: ${response}, if it is wrong please write the correct value below, it will be added to the training dataset.`);
         });
     }
 
@@ -84,16 +82,16 @@ $(function () {
         // downloadFabric(canvas,"image");
         // var canvi = document.createElement("newer");
         var resizedCanvas =window._canvas = new fabric.Canvas('smallCanvas');
-var resizedContext = resizedCanvas.getContext("2d");
+        var resizedContext = resizedCanvas.getContext("2d");
 
-resizedCanvas.height = "23";
-resizedCanvas.width = "23";
+        resizedCanvas.height = "23";
+        resizedCanvas.width = "23";
 
-var canvas = document.getElementById("canvas");
+        var canvas = document.getElementById("canvas");
 
-resizedContext.drawImage(canvas, 0, 0, 32 , 32);
-// var myResizedData = resizedCanvas.toDataURL();
-downloadFabric(document.getElementById("smallCanvas"),"image");
+        resizedContext.drawImage(canvas, 0, 0, 32 , 32);
+        // var myResizedData = resizedCanvas.toDataURL();
+        calculate(document.getElementById("smallCanvas"),"image");
     })
 
 });
