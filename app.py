@@ -13,7 +13,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def index():
     
 
-    return render_template("index.html", count=count)
+    return render_template("index.html",count=1)
 
 # WRITE ON A 32X32 CANVAS AND GIVE IMAGE TO THE PICKLE EXPORT TO GUESS WHAT NUMBER IT IS
 
