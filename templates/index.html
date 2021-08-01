@@ -34,13 +34,14 @@
     <div>
         <h1>Welcome!</h1><br>
         <p id="theResult">Please draw a number in the canvas below and our pre-trained model will try to predict your number. </p>
-        
+        <div id="original" style="display: none;"></div>
+        <div id="resampled" style="display: none;"></div>
         <div style="width: 100%;text-align:center;">
             <canvas id="canvas" width="250" height="250" class="canvas" style="border: 1px solid black;display:inline;"></canvas>
         </div>
         
 
-        <canvas id="smallCanvas" width="23" height="23" class="canvas" style="border: 1px solid black;display:none;"></canvas>
+        <canvas id="smallCanvas" width="20" height="20" class="canvas" style="border: 1px solid black;display: none;"></canvas>
 
         <button type="button" id="btn">Calculate</button>
     </div>
@@ -50,6 +51,7 @@
     <script>
             
             var canvas;
+            var flag=0;
 
 $(function () {
     canvas = window._canvas = new fabric.Canvas('canvas');
@@ -65,33 +67,43 @@ $(function () {
     //     $('<a>').attr({href:url,download:name})[0].click();
     // }
 
-    function calculate(canvas,name){
+    function calculate(){
     //  convert the canvas to a data url and download it
         
         $.ajax({
           type: "POST",
           url:"test",
           enctype: "multipart/form-data",
-          data: {"file": canvas.toDataURL()}
+          data: {"file": document.getElementById("resampled").firstChild.src}
         }).then(function(response){
             $('#theResult').text(`You wrote number: ${response}, if it is wrong please write the correct value below, it will be added to the training dataset.`);
         });
     }
 
     $('#btn').click(function(){
-        // downloadFabric(canvas,"image");
-        // var canvi = document.createElement("newer");
-        var resizedCanvas =window._canvas = new fabric.Canvas('smallCanvas');
-        var resizedContext = resizedCanvas.getContext("2d");
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
 
-        resizedCanvas.height = "23";
-        resizedCanvas.width = "23";
+        canvas.width = 28; // target width
+        canvas.height = 28; // target height
 
-        var canvas = document.getElementById("canvas");
+        var image = new Image();
+        document.getElementById("original").appendChild(image);
 
-        resizedContext.drawImage(canvas, 0, 0, 32 , 32);
-        // var myResizedData = resizedCanvas.toDataURL();
-        calculate(document.getElementById("smallCanvas"),"image");
+        image.onload = function(e) {
+            ctx.drawImage(image, 
+                0, 0, image.width, image.height, 
+                0, 0, canvas.width, canvas.height
+            );
+            // create a new base64 encoding
+            var resampledImage = new Image();
+            resampledImage.src = canvas.toDataURL();
+            document.getElementById("resampled").appendChild(resampledImage);
+
+            calculate()
+        };
+
+        image.src = document.getElementById("canvas").toDataURL();
     })
 
 });
