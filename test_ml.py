@@ -25,10 +25,10 @@ def ml_softmax_test(title):
     ytest = softmax( Z.dot(W2.T),0 )
     
     ttest = np.argmax(ytest, 0)
-    return ttest
+    return ttest,""
 
 def cnn_test(title):
-    mdl = keras.models.load_model('my_model')
+    mdl = keras.models.load_model('new_model')
 
     im = Image.open(title)
     pixels = list(im.getdata())
@@ -37,4 +37,9 @@ def cnn_test(title):
 
     pred = mdl.predict([newPixels])
 
-    return np.argmax(pred[0])
+    # results=""
+
+    # for index in range(len(pred[0])):
+    #     results+=(str(index)+"="+str(pred[0][index])+"\n")
+    # print(results)
+    return np.argmax(pred[0]),pred[0]
