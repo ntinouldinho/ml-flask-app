@@ -1,5 +1,7 @@
 import os
 import base64
+import time
+import numpy as np
 from flask import Flask, flash, request, redirect, url_for,render_template
 from werkzeug.utils import secure_filename
 from test_ml import ml_softmax_test,cnn_test
@@ -11,8 +13,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def index():
-    
-
     return render_template("index.html",count=1)
 
 # WRITE ON A 32X32 CANVAS AND GIVE IMAGE TO THE PICKLE EXPORT TO GUESS WHAT NUMBER IT IS
@@ -33,13 +33,29 @@ def test():
         
         convert_and_save(file)
 
-        result = cnn_test("imageToSave.png") if method=="cnn" else ml_softmax_test("imageToSave.png")
+        result,all = cnn_test("imageToSave.png") if method=="cnn" else ml_softmax_test("imageToSave.png")
 
-        return "Using "+method+" the model believes you wrote number "+str(result)
+        return {"message":"Using "+method+" the model believes you wrote number "+str(result)+". \n","results":all.tolist()}
+
+@app.route("/save", methods=['GET','POST'])
+def save():
+    if request.method == 'POST':
+        if 'file' not in request.values:
+    
+            flash('No file part')
+            return redirect(request.url)
+        file = request.values['file']
+        number = request.values['number']
+        #remove the begining of the file
+        file = file.replace("data:image/png;base64,", "")
+        
+        convert_and_save(file,"pics/"+str(number)+"/"+str(time.time())+".png")
+
+        return 'Image saved at '+ str(number)+"/"+str(time.time())
 
 
-def convert_and_save(b64_string):
-    with open("imageToSave.png", "wb") as fh:
+def convert_and_save(b64_string,filename="imageToSave.png"):
+    with open(filename, "wb") as fh:
         fh.write(base64.decodebytes(b64_string.encode()))
 
 if __name__ == "__main__":
