@@ -27,6 +27,15 @@
         p {
             font-size: 24pt;
         }
+
+        table, th, td {
+            border: 1px solid black;
+            text-align: center;
+        }
+        .canvas-container { 
+            margin:0 auto ;
+        }
+
     </style>
 </head>
 
@@ -34,23 +43,51 @@
     <div>
         <h1>Welcome!</h1><br>
         <p id="theResult">Please draw a number in the canvas below and our pre-trained model will try to predict your number. </p>
+        <table id="results_table" style="margin:auto;display: none">
+            <thead>
+                <tr>
+                    <th>0</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>5</th>
+                    <th>6</th>
+                    <th>7</th>
+                    <th>8</th>
+                    <th>9</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
         <div id="original" style="display: none;"></div>
         <div id="resampled" style="display: none;"></div>
         <div style="width: 100%;text-align:center;">
             <canvas id="canvas" width="250" height="250" class="canvas" style="border: 1px solid black;display:inline;"></canvas>
         </div>
         
+        <div id="number_value" style="display: none;">
+            <input type="number" id="correct_value" name="correct_value">
+            <label for="correct_value">Which number did you draw?</label><br>
+            <button type="button" id="save">Save</button>
+        </div>
+
+        
 
         <canvas id="smallCanvas" width="20" height="20" class="canvas" style="border: 1px solid black;display: none;"></canvas>
 
         <h3>Pick the method that will be used:</h3>
 
-        <input type="radio" id="sga" name="method" value="sga" checked>
+        <input type="radio" id="sga" name="method" value="sga" >
         <label for="sga">Stohastic Grad. Ascent</label><br>
-        <input type="radio" id="cnn" name="method" value="cnn">
+        <input type="radio" id="cnn" name="method" value="cnn" checked>
         <label for="cnn">CNN</label><br><br>
 
         <button type="button" id="btn">Calculate</button>
+        <button type="button" id="clear">Clear</button>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.3.0/fabric.min.js"></script>
@@ -65,8 +102,8 @@ $(function () {
     canvas.backgroundColor = 'white';
     canvas.isDrawingMode= 1;
     canvas.freeDrawingBrush.color = "black";
-    canvas.freeDrawingBrush.width = 10;
-    canvas.renderAll();
+    canvas.freeDrawingBrush.width = 25;
+    // canvas.renderAll();
 
 
     // function download(url,name){
@@ -83,7 +120,14 @@ $(function () {
           enctype: "multipart/form-data",
           data: {"file": document.getElementById("resampled").firstChild.src,"method":$('input[name=method]:checked').val()}
         }).then(function(response){
-            $('#theResult').text(`${response}, if it is wrong please write the correct value below, it will be added to the training dataset.`);
+            console.log(response.results)
+            $('#theResult').text(`${response.message}. If it is wrong please write the correct value below, it will be added to the training dataset.`);
+            
+            var res = ""
+            response.results.forEach(element => res+=`<td>${element.toFixed(3)}</td>`);
+            
+            $("#results_table tbody").html(`<tr> ${res} </tr`);
+            $("#results_table").show()
         });
     }
 
@@ -107,10 +151,29 @@ $(function () {
             resampledImage.src = canvas.toDataURL();
             document.getElementById("resampled").appendChild(resampledImage);
 
-            calculate()
+            calculate();
+            $("#number_value").show();
         };
 
         image.src = document.getElementById("canvas").toDataURL();
+    })
+
+    $('#save').click(function(){
+        $.ajax({
+          type: "POST",
+          url:"save",
+          enctype: "multipart/form-data",
+          data: {"file": document.getElementById("resampled").firstChild.src,"number":$('input[name=correct_value]').val()}
+        }).then(function(response){
+            $('#theResult').text(response);
+        });
+
+    })
+
+    $('#clear').click(function(){
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        ctx.clear();
     })
 
 });
