@@ -43,6 +43,13 @@
 
         <canvas id="smallCanvas" width="20" height="20" class="canvas" style="border: 1px solid black;display: none;"></canvas>
 
+        <h3>Pick the method that will be used:</h3>
+
+        <input type="radio" id="sga" name="method" value="sga" checked>
+        <label for="sga">Stohastic Grad. Ascent</label><br>
+        <input type="radio" id="cnn" name="method" value="cnn">
+        <label for="cnn">CNN</label><br><br>
+
         <button type="button" id="btn">Calculate</button>
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -74,9 +81,9 @@ $(function () {
           type: "POST",
           url:"test",
           enctype: "multipart/form-data",
-          data: {"file": document.getElementById("resampled").firstChild.src}
+          data: {"file": document.getElementById("resampled").firstChild.src,"method":$('input[name=method]:checked').val()}
         }).then(function(response){
-            $('#theResult').text(`You wrote number: ${response}, if it is wrong please write the correct value below, it will be added to the training dataset.`);
+            $('#theResult').text(`${response}, if it is wrong please write the correct value below, it will be added to the training dataset.`);
         });
     }
 

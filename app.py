@@ -27,13 +27,15 @@ def test():
             return redirect(request.url)
 
         file = request.values['file']
-
+        method = request.values['method']
         #remove the begining of the file
         file = file.replace("data:image/png;base64,", "")
         
         convert_and_save(file)
 
-        return "With cnn:"+str(cnn_test("imageToSave.png"))
+        result = cnn_test("imageToSave.png") if method=="cnn" else ml_softmax_test("imageToSave.png")
+
+        return "Using "+method+" the model believes you wrote number "+str(result)
 
 
 def convert_and_save(b64_string):
