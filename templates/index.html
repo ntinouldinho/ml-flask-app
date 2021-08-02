@@ -36,16 +36,31 @@
             margin:0 auto ;
         }
 
+        header {
+            text-align: center;
+            background-image: url("https://cdn.shortpixel.ai/client/q_glossy,ret_img,w_848/https://www.iimtindia.net/Blog/wp-content/uploads/2021/05/Machine-Learning.jpg");
+            background-size: 75% 100%;
+            height:50vh;
+            background-position: center;
+            background-repeat: no-repeat;  
+        }
+
     </style>
 </head>
 
 <body>
+    
     <div>
-        <h1>Welcome!</h1><br>
+        <header>
+            <h1>A number recognition demonstration</h1>
+            <!-- <img src="https://cdn.shortpixel.ai/client/q_glossy,ret_img,w_848/https://www.iimtindia.net/Blog/wp-content/uploads/2021/05/Machine-Learning.jpg" alt="WebRTC Illustration" height="250" width="800"> -->
+        </header> 
+
         <p id="theResult">Please draw a number in the canvas below and our pre-trained model will try to predict your number. </p>
         <table id="results_table" style="margin:auto;display: none">
             <thead>
                 <tr>
+                    <th>Method</th>
                     <th>0</th>
                     <th>1</th>
                     <th>2</th>
@@ -56,6 +71,7 @@
                     <th>7</th>
                     <th>8</th>
                     <th>9</th>
+                    <th>Result</th>
                 </tr>
             </thead>
             <tbody>
@@ -71,19 +87,12 @@
         <div id="number_value" style="display: none;">
             <input type="number" id="correct_value" name="correct_value">
             <label for="correct_value">Which number did you draw?</label><br>
-            <button type="button" id="save">Save</button>
+            <button type="button" id="save">Save</button><br>
         </div>
 
         
 
         <canvas id="smallCanvas" width="20" height="20" class="canvas" style="border: 1px solid black;display: none;"></canvas>
-
-        <h3>Pick the method that will be used:</h3>
-
-        <input type="radio" id="sga" name="method" value="sga" >
-        <label for="sga">Stohastic Grad. Ascent</label><br>
-        <input type="radio" id="cnn" name="method" value="cnn" checked>
-        <label for="cnn">CNN</label><br><br>
 
         <button type="button" id="btn">Calculate</button>
         <button type="button" id="clear">Clear</button>
@@ -118,15 +127,36 @@ $(function () {
           type: "POST",
           url:"test",
           enctype: "multipart/form-data",
-          data: {"file": document.getElementById("resampled").firstChild.src,"method":$('input[name=method]:checked').val()}
+          data: {"file": document.getElementById("resampled").firstChild.src}
         }).then(function(response){
-            console.log(response.results)
-            $('#theResult').text(`${response.message}. If it is wrong please write the correct value below, it will be added to the training dataset.`);
+
+            $('#theResult').text(`If it is wrong please write the correct value below, it will be added to the training dataset.`);
             
-            var res = ""
-            response.results.forEach(element => res+=`<td>${element.toFixed(3)}</td>`);
+            var res = "";
             
-            $("#results_table tbody").html(`<tr> ${res} </tr`);
+
+            var cnn = ["cnn",...response.cnn[1],response.cnn[0]];
+            var sga= ["sga",...response.sga[1],response.sga[0]];
+            
+            var numbers = [cnn,sga];
+
+
+            for (let array of numbers) { // You can use `let` instead of `const` if you like
+                let message = "<tr>";
+                console.log(array);
+                array.forEach(element => {
+                    if(typeof element == 'number'){
+                        message+=`<td>${element.toFixed(3)}</td>`
+                    }else{
+                        message+=`<td>${element}</td>`
+                    }
+                });
+                message+="</tr>";
+                res+=message;
+            }
+
+            
+            $("#results_table tbody").html(res);
             $("#results_table").show()
         });
     }

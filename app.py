@@ -27,15 +27,19 @@ def test():
             return redirect(request.url)
 
         file = request.values['file']
-        method = request.values['method']
+        
         #remove the begining of the file
         file = file.replace("data:image/png;base64,", "")
         
         convert_and_save(file)
 
-        result,all = cnn_test("imageToSave.png") if method=="cnn" else ml_softmax_test("imageToSave.png")
+        cnn_result,cnn_all = cnn_test("imageToSave.png")
 
-        return {"message":"Using "+method+" the model believes you wrote number "+str(result)+". \n","results":all.tolist()}
+        sga_result,sga_all = ml_softmax_test("imageToSave.png")
+
+        total_results = {"cnn":[str(cnn_result),cnn_all.tolist()],"sga":[str(sga_result),sga_all.tolist()]}
+
+        return total_results
 
 @app.route("/save", methods=['GET','POST'])
 def save():
