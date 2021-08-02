@@ -25,7 +25,7 @@ def ml_softmax_test(title):
     ytest = softmax( Z.dot(W2.T),0 )
     
     ttest = np.argmax(ytest, 0)
-    return ttest,""
+    return ttest,ytest
 
 def cnn_test(title):
     mdl = keras.models.load_model('new_model')
