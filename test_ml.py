@@ -43,3 +43,21 @@ def cnn_test(title):
     #     results+=(str(index)+"="+str(pred[0][index])+"\n")
     # print(results)
     return np.argmax(pred[0]),pred[0]
+
+
+def cnn_new_test(title):
+    mdl = keras.models.load_model('conv2d_model')
+
+    im = Image.open(title)
+    pixels = list(im.getdata())
+    newPixels =np.array([1-pixels[x][0]/255.0 for x in range(len(pixels)) ])
+    newPixels = newPixels.reshape(1,28, 28)
+
+    pred = mdl.predict([newPixels])
+
+    # results=""
+
+    # for index in range(len(pred[0])):
+    #     results+=(str(index)+"="+str(pred[0][index])+"\n")
+    # print(results)
+    return np.argmax(pred[0]),pred[0]

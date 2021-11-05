@@ -4,7 +4,7 @@ import time
 import numpy as np
 from flask import Flask, flash, request, redirect, url_for,render_template
 from werkzeug.utils import secure_filename
-from test_ml import ml_softmax_test,cnn_test
+from test_ml import ml_softmax_test,cnn_test,cnn_new_test
 
 UPLOAD_FOLDER = './pics'
 
@@ -37,7 +37,9 @@ def test():
 
         sga_result,sga_all = ml_softmax_test("imageToSave.png")
 
-        total_results = {"cnn":[str(cnn_result),cnn_all.tolist()],"sga":[str(sga_result),sga_all.tolist()]}
+        new_cnn_result,new_cnn_all=cnn_new_test("imageToSave.png")
+
+        total_results = {"cnn":[str(cnn_result),cnn_all.tolist()],"sga":[str(sga_result),sga_all.tolist()],"new_cnn":[str(new_cnn_result),new_cnn_all.tolist()]}
 
         return total_results
 
