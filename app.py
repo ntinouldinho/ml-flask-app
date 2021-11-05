@@ -33,13 +33,11 @@ def test():
         
         convert_and_save(file)
 
-        cnn_result,cnn_all = cnn_test("imageToSave.png")
+        cnn_result,cnn_all = cnn_new_test("imageToSave.png")
 
         sga_result,sga_all = ml_softmax_test("imageToSave.png")
 
-        new_cnn_result,new_cnn_all=cnn_new_test("imageToSave.png")
-
-        total_results = {"cnn":[str(cnn_result),cnn_all.tolist()],"sga":[str(sga_result),sga_all.tolist()],"new_cnn":[str(new_cnn_result),new_cnn_all.tolist()]}
+        total_results = {"cnn":[str(cnn_result),cnn_all.tolist()],"sga":[str(sga_result),sga_all.tolist()]}
 
         return total_results
 
