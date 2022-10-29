@@ -23,4 +23,6 @@ As you open the site you will notice a 250x250 pixel canvas so you can freely dr
 
 In the case that the prediction is wrong, user is prompted to write down which number was actually drawn onto the canvas. This image will be added to the training dataset and will be used in the future for further improvements. 
 
+# Demonstration
 
+![Demonstration](./fig1.png)
