@@ -5,6 +5,6 @@ itsdangerous==1.1.0
 Jinja2==2.11.2
 MarkupSafe==1.1.1
 Werkzeug==3.0.3
-numpy==1.19.3
+numpy==1.22.0
 Pillow==10.3.0
 tensorflow-cpu==2.11.1
